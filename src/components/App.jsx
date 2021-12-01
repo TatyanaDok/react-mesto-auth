@@ -35,6 +35,8 @@ function App() {
   const [userLoginData, setUserLoginData] = useState('')
   const history = useHistory()
 
+  
+
   useEffect(() => {
     api.getInitialData()
       .then(([user, cards]) => {
@@ -60,7 +62,7 @@ function App() {
           console.log(`Произошла ошибка: ${err}`);
         });
     }
-  }, [ history, loggedIn]);
+  }, [history, loggedIn]);
   
   useEffect(() => {
     if (loggedIn) {
@@ -71,33 +73,57 @@ function App() {
   //Открытие попапа аватара
   function handleEditAvatarClick() {
     setIsAvatarPopupOpen(true)
+    window.addEventListener('keydown', handleClosePopupWithEsc);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
   }
 
   //Открытие попапа данных пользователя
   function handleEditProfileClick() {
     setIsProfilePopupOpen(true)
+    window.addEventListener('keydown', handleClosePopupWithEsc);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
   }
 
   //Открытие попапа с формой добавления данных
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true)
+    window.addEventListener('keydown', handleClosePopupWithEsc);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
   }
 
   //Открытие попапа с изображением
   function handleCardClick(card) {
     setSelectedCard(card)
+    window.addEventListener('keydown', handleClosePopupWithEsc);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
   }
 
   //Обработчик для открытия попапа удаления
   function handleDeleteCardClick(e) {
     setIsConfirmDeletePopupOpen(true)
     setCardIdForDelete(e._id)
+    window.addEventListener('keydown', handleClosePopupWithEsc);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
   }
-
+//Обработчик для открытия попапа статуса регистрации
   function openRegModal() {
     setIsTooltipOpened(true);
+    window.addEventListener('click', handleClosePopupWithOverlayClick);
     
   }
+
+  function handleClosePopupWithEsc (event) {
+    if (event.keyCode === 27) {
+      closeAllPopups();
+    }
+  }
+
+  function handleClosePopupWithOverlayClick(evt) {
+    if (evt.target.classList.contains('popup_is-opened')) {
+      closeAllPopups();
+    }
+  }
+
   //Закрытие поп-апов
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false)
@@ -106,6 +132,8 @@ function App() {
     setIsConfirmDeletePopupOpen(false)
     setIsTooltipOpened(false);
     setSelectedCard(null)
+    window.removeEventListener('keydown', handleClosePopupWithEsc);
+    window.removeEventListener('click', handleClosePopupWithOverlayClick);
   }
 
   
@@ -188,7 +216,6 @@ function App() {
         setIsLoading(false)
       })
   }
-
 
 //Регистрация пользователя
 const handleRegister = (data) => {
